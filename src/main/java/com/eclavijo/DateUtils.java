@@ -1,4 +1,4 @@
-package com.mkyong;
+package com.eclavijo;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
