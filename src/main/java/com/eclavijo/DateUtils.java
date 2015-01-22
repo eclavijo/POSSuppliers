@@ -37,7 +37,7 @@ public class DateUtils{
 			br = new BufferedReader(new FileReader(csvFile));
 			while ((line = br.readLine()) != null) {
 
-				// use comma as separator
+				// , as separator
 				String[] newLine = line.split(cvsSplitBy);
 
 				System.out.println(" Name = " + newLine[0] + " , age= ["
@@ -73,12 +73,12 @@ public class DateUtils{
 		
 	}
 	
-	private static void generateCsvFile(String sFileName) {
+	private static void generateCsvFile(String location) {
 
 		try {
-			FileWriter writer = new FileWriter(sFileName);
+			FileWriter writer = new FileWriter(location);
 
-			writer.append("DisplayName");
+			writer.append("Name");
 			writer.append(',');
 			writer.append("Age");
 			writer.append(',');
