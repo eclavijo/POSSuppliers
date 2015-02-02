@@ -22,7 +22,7 @@
     </environments>
  
     <mappers>
-		<mapper resource="com/model/Supplier.xml" />
+		<mapper resource="Supplier.xml" />
     </mappers>
  
 </configuration>
