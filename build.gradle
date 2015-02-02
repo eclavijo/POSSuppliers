@@ -10,7 +10,7 @@ task fatJar(type: Jar) {
 	manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example', 
         	'Implementation-Version': version,
-        	'Main-Class': 'com.eclavijo.DateUtils'
+        	'Main-Class': 'com.eclavijo.SupplierMantainer'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -25,10 +25,10 @@ repositories {
 //Project dependencies
 dependencies {
 	compile 'ch.qos.logback:logback-classic:1.1.2'
-    testCompile 'junit:junit:4.11'
-}
-
-dependencies {
-    compile 'log4j:log4j:1.2.17'
+	compile group: 'com.google.guava', name: 'guava', version: '18.0'
+	compile 'org.apache.commons:commons-csv:1.1'
+	compile 'postgresql:postgresql:9.1-901.jdbc4'
+	compile 'log4j:log4j:1.2.17'
+	compile 'org.mybatis:mybatis:3.0.1'
     testCompile 'junit:junit:4.11'
 }

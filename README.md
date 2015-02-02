@@ -1,12 +1,8 @@
-README FILE 
+Example Proyect for Integration of Following Frameworks Tools
 
-Test Gadle proyect that write and read a CSV file in C:
-
-remeber make the jar with fatJar Gradle command
-
-to run the jar 
-java -jar [jar name] 
-
-it will create the file if it doesnt exist the read it and print it 
-
-Bye 
+-Gradle to Build and Dependency Control
+-MyIbatis as ORM for Mapping & Persistence
+-JDBC Driver for PostgreSQL
+-Junit For Some Unite Test
+-Log4J or logback or SLF4J for LOGGIN
+-

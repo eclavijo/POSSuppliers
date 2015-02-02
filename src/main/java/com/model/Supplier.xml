@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Supplier">
+
+	<resultMap id="result" type="Supplier">
+		<result property="supplierId" column="id" />
+		<result property="supplierName" column="name" />
+		<result property="supplierAddress" column="address" />
+		<result property="supplierPhone" column="phone" />
+		<result property="supplierEmail" column="email" />
+	</resultMap>
+	
+
+
+	<select id="getAll" resultMap="result">
+		SELECT * FROM SUPPLIER
+	</select>
+
+	<select id="getById" parameterType="int" resultMap="result">
+		SELECT * FROM SUPPLIER WHERE id = #{id}
+	</select>
+
+	<delete id="deleteById" parameterType="int">
+		DELETE from SUPPLIER WHERE id = #{id};
+	</delete>
+
+	<insert id="insert" useGeneratedKeys="true"
+    keyProperty="id" parameterType="Supplier">
+		INSERT INTO SUPPLIER (name, phone, email,address )
+		VALUES (#{supplierName}, #{supplierPhone}, #{supplierEmail}, #{supplierAddress});
+	</insert>
+
+	<update id="update" parameterType="Supplier">
+		UPDATE SUPPLIER
+		SET
+		address = #{supplierAddress},
+		email = #{supplierEmail},
+		name = #{supplierName},
+		phone = #{supplierPhone}
+		WHERE id = #{supplierId};
+	</update>
+
+</mapper>
