@@ -1,0 +1,9 @@
+CREATE SEQUENCE supplier_id_seq;
+CREATE TABLE "public"."supplier" (
+"name" varchar COLLATE "default",
+"email" varchar COLLATE "default",
+"phone" varchar COLLATE "default",
+"address" varchar COLLATE "default",
+"id" int4 NOT NULL DEFAULT nextval('supplier_id_seq'),
+CONSTRAINT "supplier_pkey" PRIMARY KEY ("id"));
+ALTER SEQUENCE supplier_id_seq OWNED BY supplier.id;
