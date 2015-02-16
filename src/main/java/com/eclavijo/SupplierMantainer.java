@@ -10,7 +10,6 @@ package com.eclavijo;
 
 import java.io.IOException;
 import java.text.ParseException;
-
 import java.util.List;
 
 //para log4j
@@ -24,9 +23,10 @@ import com.eclavijo.dao.SupplierDao;
 public class SupplierMantainer {
 
 	private static final String CSV_FILENAME = "c:\\suppliersCSVlib.csv";
-	private static final SupplierCsvFileReader csvReader = new SupplierCsvFileReader();
-	private static final SupplierCsvFileWriter csvWriter = new SupplierCsvFileWriter();
-	private static final SupplierDao supplierDao = new SupplierDao();
+	private static final SupplierCsvFileReader csvReader = new SupplierCsvFileReader(CSV_FILENAME);
+	private static final SupplierCsvFileWriter csvWriter = new SupplierCsvFileWriter(csvReader);
+	private static final SupplierDao supplierDao = new SupplierDao(
+			MyBatisConnectionFactory.getSqlSessionFactory());
 
 	public static void main(String[] args) throws Exception {
 		SystemHelper sysHelper = new SystemHelper();
@@ -66,19 +66,35 @@ public class SupplierMantainer {
 
 			sysHelper
 					.println("*************** Find Supplier *************** \n Please enter the id of the supplier to show the info.\n");
-			Long id = Long.parseLong(sysHelper
-					.readln("\nEnter Supplier's ID to find.\n"));
-			SupplierPOJO supplier = supplierDao.getById(id);
-			sysHelper.printSupplier(supplier);
+			Long id = 0L;
+
+			String input = sysHelper.readln("\nEnter Supplier's ID to find.\n");
+
+			try {
+				id = Long.parseLong(input);
+				SupplierPOJO supplier = supplierDao.getById(id);
+				sysHelper.printSupplier(supplier);
+			} catch (NumberFormatException e) {
+				sysHelper.println("Wrong Number Format");
+			}
+
 		}
 
 		if (args[0].equals("deleteDB")) {
 			sysHelper
 					.println("*************** Delete Supplier *************** \n Please enter the id of the supplier to delete.\n");
-			Long id = Long.parseLong(sysHelper
-					.readln("\nEnter Supplier's ID to delete.\n"));
-
-			supplierDao.deleteById(id);
+			Long id = 0L;
+			String input = sysHelper
+					.readln("\nEnter Supplier's ID to delete.\n");
+			try {
+				id = Long.parseLong(input);
+				SupplierPOJO supplier = supplierDao.getById(id);
+				supplierDao.deleteById(id);
+				sysHelper.printSupplier(supplier);
+				sysHelper.println(" Deleted.");
+			} catch (NumberFormatException e) {
+				sysHelper.println("Wrong Number Format");
+			}
 
 		}
 
@@ -86,21 +102,35 @@ public class SupplierMantainer {
 
 			sysHelper
 					.println("*************** Modify Supplier *************** \n Please enter the id of the supplier to Modify.\n");
-			Long id = Long.parseLong(sysHelper
-					.readln("\nEnter Supplier's ID to delete.\n"));
-			SupplierPOJO supplier = supplierDao.getById(id);
-			sysHelper.println("\n Supplier's ID to modify.\n");
-			sysHelper.printSupplier(supplier);
-			supplier.setSupplierName(sysHelper
-					.readln("\nEnter Supplier's new Name\n"));
-			supplier.setSupplierAddress(sysHelper
-					.readln("\nEnter Supplier's new Address\n"));
-			supplier.setSupplierEmail(sysHelper
-					.readln("\nEnter Supplier's new Email\n"));
-			supplier.setSupplierPhone(sysHelper
-					.readln("\nEnter Supplier's new Phone\n"));
+			Long id = 0L;
+			String input = sysHelper
+					.readln("\nEnter Supplier's ID to modify.\n");
+			try {
+				id = Long.parseLong(input);
+				SupplierPOJO supplier = supplierDao.getById(id);
+				sysHelper.println("\n Supplier's ID to modify.\n");
+				sysHelper.printSupplier(supplier);
+				String name = sysHelper
+						.readln("\nEnter Supplier's new Name\n");
+				String address = sysHelper
+						.readln("\nEnter Supplier's new Address\n");
+				String email= sysHelper
+						.readln("\nEnter Supplier's new Email\n");
+				String phone= sysHelper
+						.readln("\nEnter Supplier's new Phone\n");
+				if(name.equals(""))name=supplier.getName();
+				if(address.equals(""))name=supplier.getAddress();
+				if(email.equals(""))name=supplier.getEmail();
+				if(phone.equals(""))name=supplier.getPhone();
+				supplier.setName(name);
+				supplier.setAddress(address);
+				supplier.setEmail(email);
+				supplier.setPhone(phone);
+				supplierDao.update(supplier);
+			} catch (NumberFormatException e) {
+				sysHelper.println("Wrong Number Format");
+			}
 
-			supplierDao.update(supplier);
 
 		}
 
@@ -119,17 +149,15 @@ public class SupplierMantainer {
 			LOGGER.info("\n [MAIN] Current Date :["
 					+ dateUtils.getCurrentDate() + "]\n");
 
-			SupplierCsvFileWriter writer = new SupplierCsvFileWriter();
-
-			long lastId = csvReader.getLastSupplierId(CSV_FILENAME);
-			long id = lastId + 1;
+			long lastId = csvReader.getLastSupplierId();
+			long id = lastId + 1;//make it easy to understand
 			SupplierPOJO supplier = new SupplierPOJO(id,
 					sysHelper.readln("\nEnter Supplier's Name\n"),
 					sysHelper.readln("\nEnter Supplier's Address\n"),
 					sysHelper.readln("\nEnter Supplier's Email\n"),
 					sysHelper.readln("\nEnter Supplier's Phone\n"));
 
-			writer.writeCsvFileAdd(CSV_FILENAME, supplier);
+			csvWriter.writeCsvFileAdd(CSV_FILENAME, supplier);
 
 			sysHelper
 					.println("\n--- The following entry was successfully added --- \n");
@@ -140,25 +168,39 @@ public class SupplierMantainer {
 
 			sysHelper
 					.println("*************** Suppliers List *************** \n Showing all suppliers.\n");
-			csvReader.printSuppliersList(CSV_FILENAME);
+			csvReader.printSuppliersList();
 			sysHelper.println("*************** EOF *************** \n\n");
 		}
 		if (args[0].equals("find")) {
 
 			sysHelper
 					.println("*************** Find Supplier *************** \n Please enter the id of the supplier to show the info.\n");
-			Long id = Long.parseLong(sysHelper
-					.readln("\nEnter Supplier's ID to find.\n"));
-			csvReader.findSupplierById(id, CSV_FILENAME);
+			Long id = 0L;
+			String received = sysHelper
+					.readln("\nEnter Supplier's ID to find.\n");
+			try {
+				id = Long.parseLong(received);
+				csvReader.findSupplierById(id);
+			} catch (NumberFormatException e) {
+				sysHelper.println("Wrong Number Format");
+			}
 
 		}
 		if (args[0].equals("delete")) {
 
 			sysHelper
 					.println("*************** Delete Supplier *************** \n Please enter the id of the supplier to delete.\n");
-			Long id = Long.parseLong(sysHelper
-					.readln("\nEnter Supplier's ID to delete.\n"));
-			csvWriter.deleteSupplierById(id, CSV_FILENAME);
+			Long id = 0L;
+
+			String input = sysHelper
+					.readln("\nEnter Supplier's ID to delete.\n");
+
+			try {
+				id = Long.parseLong(input);
+				csvWriter.deleteSupplierById(id, CSV_FILENAME);
+			} catch (NumberFormatException e) {
+				sysHelper.println("Wrong Number Format");
+			}
 
 		}
 
@@ -166,9 +208,15 @@ public class SupplierMantainer {
 
 			sysHelper
 					.println("*************** Modify Supplier *************** \n Please enter the id of the supplier to modify.\n");
-			Long id = Long.parseLong(sysHelper
-					.readln("\nEnter Supplier's ID to delete.\n"));
-			csvWriter.modifySupplierById(id, CSV_FILENAME);
+			Long id = 0L;
+			String input = sysHelper
+					.readln("\nEnter Supplier's ID to modify.\n");
+			try {
+				id = Long.parseLong(input);
+				csvWriter.modifySupplierById(id);
+			} catch (NumberFormatException e) {
+				sysHelper.println("Wrong Number Format");
+			}
 
 		}
 		// else {

@@ -15,14 +15,17 @@ public class SupplierCsvFileWriter {
 
 	// Delimiter used in CSV file
 	private static final String NEW_LINE_SEPARATOR = "\n";
-
 	// CSV file header
 	private static final Object[] FILE_HEADER = { "id", "name", "adress",
 			"email", "phone" };
-	private static final SupplierCsvFileReader csvReader = new SupplierCsvFileReader();
+	private  static  SupplierCsvFileReader csvReader;
 	private static final SystemHelper sysHelper = new SystemHelper();
+	
+	public SupplierCsvFileWriter(SupplierCsvFileReader csvReader) {
+		this.csvReader = csvReader;
+	}
 
-	public static void writeCsvFile(String fileName,
+	public static void writeCsvFile(
 			List<SupplierPOJO> listSuppliers) {
 
 		FileWriter fileWriter = null;
@@ -30,17 +33,16 @@ public class SupplierCsvFileWriter {
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT
 				.withRecordSeparator(NEW_LINE_SEPARATOR);
 		try {
-			fileWriter = new FileWriter(fileName);
+			fileWriter = new FileWriter(csvReader.getLocation());
 			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
 			csvFilePrinter.printRecord(FILE_HEADER);
 			for (SupplierPOJO supplier : listSuppliers) {
 				List supplierDataRecord = new ArrayList();
-				supplierDataRecord
-						.add(String.valueOf(supplier.getSupplierId()));
-				supplierDataRecord.add(supplier.getSupplierName());
-				supplierDataRecord.add(supplier.getSupplierAddress());
-				supplierDataRecord.add(supplier.getSupplierEmail());
-				supplierDataRecord.add(supplier.getSupplierPhone());
+				supplierDataRecord.add(String.valueOf(supplier.getId()));
+				supplierDataRecord.add(supplier.getName());
+				supplierDataRecord.add(supplier.getAddress());
+				supplierDataRecord.add(supplier.getEmail());
+				supplierDataRecord.add(supplier.getPhone());
 				csvFilePrinter.printRecord(supplierDataRecord);
 			}
 
@@ -60,7 +62,7 @@ public class SupplierCsvFileWriter {
 		}
 	}
 
-	public static void writeCsvFileAdd(String fileName, SupplierPOJO newSupplier) {
+	public List writeCsvFileAdd(String fileName, SupplierPOJO newSupplier) {
 
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
@@ -70,15 +72,17 @@ public class SupplierCsvFileWriter {
 			fileWriter = new FileWriter(fileName, true);
 			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
 			List supplierDataRecord = new ArrayList();
-			supplierDataRecord.add(String.valueOf(newSupplier.getSupplierId()));
-			supplierDataRecord.add(newSupplier.getSupplierName());
-			supplierDataRecord.add(newSupplier.getSupplierAddress());
-			supplierDataRecord.add(newSupplier.getSupplierEmail());
-			supplierDataRecord.add(newSupplier.getSupplierPhone());
+			supplierDataRecord.add(String.valueOf(newSupplier.getId()));
+			supplierDataRecord.add(newSupplier.getName());
+			supplierDataRecord.add(newSupplier.getAddress());
+			supplierDataRecord.add(newSupplier.getEmail());
+			supplierDataRecord.add(newSupplier.getPhone());
 			csvFilePrinter.printRecord(supplierDataRecord);
+			return supplierDataRecord;
 		} catch (Exception e) {
 			sysHelper.println("Error in CsvFileWriter !!!");
 			e.printStackTrace();
+			return null;
 		} finally {
 			try {
 				fileWriter.flush();
@@ -94,32 +98,33 @@ public class SupplierCsvFileWriter {
 
 	public SupplierPOJO deleteSupplierById(Long id, String csvFilename) {
 		List<SupplierPOJO> listSuppliers = csvReader
-				.returnSuppliersList(csvFilename);
+				.returnSuppliersList();
 		SupplierPOJO toDeleteSupplier = new SupplierPOJO();
 		for (SupplierPOJO supplier : listSuppliers) {
-			if (supplier.getSupplierId().equals(id)) {
+			if (supplier.getId().equals(id)) {
 				toDeleteSupplier = supplier;
 			}
 		}
 		if (toDeleteSupplier != null) {
 			listSuppliers.remove(toDeleteSupplier);
-			writeCsvFile(csvFilename, listSuppliers);
+			writeCsvFile(listSuppliers);
 			sysHelper.printSupplier(toDeleteSupplier);
-			sysHelper.println("\n");
-			sysHelper.println("Supplier: [" + id + "] Deleted.");
+			sysHelper.println("\n" + "Supplier: [" + id + "] Deleted.");
+			return toDeleteSupplier;
 		} else {
 			sysHelper.println("Imposible to Find Supplier: [" + id + "].");
+			return null;
 		}
-		return toDeleteSupplier;
+		
 	}
 
-	public void modifySupplierById(Long id, String csvFilename) {
+	public SupplierPOJO modifySupplierById(Long id) {
 		List<SupplierPOJO> listSuppliers = csvReader
-				.returnSuppliersList(csvFilename);
+				.returnSuppliersList();
 		SupplierPOJO toUpdateSupplier = new SupplierPOJO();
 		boolean finded = false;
 		for (SupplierPOJO supplierIndexer : listSuppliers) {
-			long suppId = supplierIndexer.getSupplierId();
+			long suppId = supplierIndexer.getId();
 			if (suppId == id) {
 				toUpdateSupplier = supplierIndexer;
 				finded = true;
@@ -127,19 +132,29 @@ public class SupplierCsvFileWriter {
 		}
 		if (finded) {
 			SupplierPOJO newSupplier = toUpdateSupplier;
-			newSupplier.setSupplierName(sysHelper
-					.readln("\nEnter New Supplier's Name\n"));
-			newSupplier.setSupplierAddress(sysHelper
-					.readln("\nEnter New Supplier's Address\n"));
-			newSupplier.setSupplierEmail(sysHelper
-					.readln("\nEnter New Supplier's Email\n"));
-			newSupplier.setSupplierPhone(sysHelper
-					.readln("\nEnter New Supplier's Phone\n"));
+			String name = sysHelper
+					.readln("\nEnter Supplier's new Name\n");
+			String address = sysHelper
+					.readln("\nEnter Supplier's new Address\n");
+			String email= sysHelper
+					.readln("\nEnter Supplier's new Email\n");
+			String phone= sysHelper
+					.readln("\nEnter Supplier's new Phone\n");
+			if(name.equals(""))name=toUpdateSupplier.getName();
+			if(address.equals(""))name=toUpdateSupplier.getAddress();
+			if(email.equals(""))name=toUpdateSupplier.getEmail();
+			if(phone.equals(""))name=toUpdateSupplier.getPhone();
+			newSupplier.setName(name);
+			newSupplier.setAddress(address);
+			newSupplier.setEmail(email);
+			newSupplier.setPhone(phone);
 			listSuppliers.set(listSuppliers.indexOf(toUpdateSupplier),
 					newSupplier);
-			writeCsvFile(csvFilename, listSuppliers);
+			writeCsvFile(listSuppliers);
 			sysHelper.println("\n");
 			sysHelper.println("****** Suppliers List Updated. ******");
+		return newSupplier;
 		}
+		else return null;
 	}
 }

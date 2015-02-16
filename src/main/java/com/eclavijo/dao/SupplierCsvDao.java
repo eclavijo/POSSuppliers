@@ -17,21 +17,21 @@ public class SupplierCsvDao {
 		return null;
 	}
 
-	public boolean addSupplier(String csvFilename, SupplierPOJO supplier)
+	public boolean addSupplier(String location, SupplierPOJO supplier)
 			throws IOException {
 
-		FileWriter writer = new FileWriter(csvFilename, true);
+		FileWriter writer = new FileWriter(location, true);
 
 		// header
-		writer.append(supplier.getSupplierId().toString());
+		writer.append(supplier.getId().toString());
 		writer.append(',');
-		writer.append(supplier.getSupplierName());
+		writer.append(supplier.getName());
 		writer.append(',');
-		writer.append(supplier.getSupplierAddress());
+		writer.append(supplier.getAddress());
 		writer.append(',');
-		writer.append(supplier.getSupplierEmail());
+		writer.append(supplier.getEmail());
 		writer.append(',');
-		writer.append(supplier.getSupplierPhone().toString());
+		writer.append(supplier.getPhone().toString());
 		writer.append('\n');
 
 		writer.flush();
@@ -56,11 +56,11 @@ public class SupplierCsvDao {
 
 			String[] newLine = line.split(cvsSplitBy);
 
-			supplier.setSupplierId(Long.valueOf(newLine[0]));
-			supplier.setSupplierName(newLine[1]);
-			supplier.setSupplierAddress(newLine[2]);
-			supplier.setSupplierEmail(newLine[3]);
-			supplier.setSupplierPhone(newLine[4]);
+			supplier.setId(Long.valueOf(newLine[0]));
+			supplier.setName(newLine[1]);
+			supplier.setAddress(newLine[2]);
+			supplier.setEmail(newLine[3]);
+			supplier.setPhone(newLine[4]);
 
 			listSuppliers.add(supplier);
 		}
@@ -80,7 +80,7 @@ public class SupplierCsvDao {
 
 		for (SupplierPOJO supplierIndexer : suppliersList) {
 
-			long suppId = supplierIndexer.getSupplierId();
+			long suppId = supplierIndexer.getId();
 			index++;
 			if (suppId == id) {
 				supplier = supplierIndexer;
@@ -92,12 +92,12 @@ public class SupplierCsvDao {
 			SystemHelper sysHelper = new SystemHelper();
 			SupplierPOJO newSupplier = supplier;
 			
-			newSupplier.setSupplierName(sysHelper.readln("\nEnter Supplier's Name\n"));
-			newSupplier.setSupplierAddress(sysHelper
+			newSupplier.setName(sysHelper.readln("\nEnter Supplier's Name\n"));
+			newSupplier.setAddress(sysHelper
 					.readln("\nEnter Supplier's Address\n"));
-			newSupplier.setSupplierEmail(sysHelper
+			newSupplier.setEmail(sysHelper
 					.readln("\nEnter Supplier's Email\n"));
-			newSupplier.setSupplierPhone(sysHelper
+			newSupplier.setPhone(sysHelper
 					.readln("\nEnter Supplier's Phone\n"));
 			
 			suppliersList.set(suppliersList.indexOf(supplier), newSupplier);
@@ -155,14 +155,14 @@ public class SupplierCsvDao {
 
 			String[] newLine = line.split(cvsSplitBy);
 
-			supplier.setSupplierId(Long.valueOf(newLine[0]));
+			supplier.setId(Long.valueOf(newLine[0]));
 
-			if (supplier.getSupplierId() == id) {
+			if (supplier.getId() == id) {
 
-				supplier.setSupplierName(newLine[1]);
-				supplier.setSupplierAddress(newLine[2]);
-				supplier.setSupplierEmail(newLine[3]);
-				supplier.setSupplierPhone(newLine[4]);
+				supplier.setName(newLine[1]);
+				supplier.setAddress(newLine[2]);
+				supplier.setEmail(newLine[3]);
+				supplier.setPhone(newLine[4]);
 				return supplier;
 			}
 
@@ -180,7 +180,7 @@ public class SupplierCsvDao {
 
 		for (SupplierPOJO supplierIndexer : suppliersList) {
 
-			long suppId = supplierIndexer.getSupplierId();
+			long suppId = supplierIndexer.getId();
 			if (suppId == id) {
 				supplier = supplierIndexer;
 				finded = true;

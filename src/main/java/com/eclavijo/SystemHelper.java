@@ -23,10 +23,10 @@ public class SystemHelper {
 	public void printSupplier(SupplierPOJO supplier){
 	
 	
-	println(" ID: [" + supplier.getSupplierId() + "] \n Name: ["
-			+ supplier.getSupplierName() + "]" + "  \n Address: [" + supplier.getSupplierAddress()
-			+ "]\n Email: [" + supplier.getSupplierEmail() + "]\n Phone: ["
-			+ supplier.getSupplierPhone() + "]. \n   -o-   ");
+	println(" ID: [" + supplier.getId() + "]  Name: ["
+			+ supplier.getName() + "]" + "   Address: [" + supplier.getAddress()
+			+ "] Email: [" + supplier.getEmail() + "] Phone: ["
+			+ supplier.getPhone() + "]. \n   -o-   ");
 	
 	}
 	

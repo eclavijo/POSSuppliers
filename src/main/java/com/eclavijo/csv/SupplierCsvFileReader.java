@@ -18,16 +18,32 @@ public class SupplierCsvFileReader {
 	// CSV file header
 	private static final String[] FILE_HEADER_MAPPING = { "id", "name",
 			"address", "email", "phone" };
-	private final SystemHelper sysHelper = new SystemHelper();
+	private static String location ="";
+	
+	public SupplierCsvFileReader(String location) {
+		this.location = location;
+	}
 
-	public List<SupplierPOJO> returnSuppliersList(String fileName) {
+	private final SystemHelper sysHelper = new SystemHelper();
+	
+	
+
+	public static String getLocation() {
+		return location;
+	}
+
+	public static void setLocation(String location) {
+		SupplierCsvFileReader.location = location;
+	}
+
+	public List<SupplierPOJO> returnSuppliersList() {
 		FileReader fileReader = null;
 		CSVParser csvFileParser = null;
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT
 				.withHeader(FILE_HEADER_MAPPING);
 		try {
 			List<SupplierPOJO> suppliers = new ArrayList<SupplierPOJO>();
-			fileReader = new FileReader(fileName);
+			fileReader = new FileReader(location);
 			csvFileParser = new CSVParser(fileReader, csvFileFormat);
 			List csvRecords = csvFileParser.getRecords();
 			for (int i = 1; i < csvRecords.size(); i++) {
@@ -54,39 +70,41 @@ public class SupplierCsvFileReader {
 		}
 	}
 
-	public long getLastSupplierId(String location) {
+	public long getLastSupplierId() {
 
-		List<SupplierPOJO> suppliers = returnSuppliersList(location);
+		List<SupplierPOJO> suppliers = returnSuppliersList();
 		long lastId = 0;
 		for (SupplierPOJO supplier : suppliers) {
-			lastId = supplier.getSupplierId();
+			lastId = supplier.getId();
 		}
 		return lastId;
 	}
 
-	public void printSuppliersList(String location) {
-		List<SupplierPOJO> suppliers = returnSuppliersList(location);
+	public void printSuppliersList() {
+		List<SupplierPOJO> suppliers = returnSuppliersList();
+		sysHelper.println("[ ID ]	[  Name  ]	[ Address ]	  [ Email ]	  [ Phone ]");
 		for (SupplierPOJO supplier : suppliers) {
-			sysHelper.println(" ID :[" + supplier.getSupplierId()
-					+ "] \n Name : [" + supplier.getSupplierName() + "]"
-					+ "  \n Address: [" + supplier.getSupplierAddress()
-					+ "]\n Email: [" + supplier.getSupplierEmail()
-					+ "]\n Phone: [" + supplier.getSupplierPhone()
-					+ "]. \n   -o-   ");
+			sysHelper.println("[" + supplier.getId()
+					+ "][" + supplier.getName() 
+					+ "][" + supplier.getAddress()
+					+ "][" + supplier.getEmail()
+					+ "][" + supplier.getPhone()
+					+ "] \n ");
 		}
+		sysHelper.println("------------------------------------------------");
 	}
 
-	public Long findSupplierById(Long id, String csvFilename) {
-		List<SupplierPOJO> suppliers = returnSuppliersList(csvFilename);
+	public Long findSupplierById(Long id) {
+		List<SupplierPOJO> suppliers = returnSuppliersList();
 		boolean finded = false;
 		for (SupplierPOJO supplier : suppliers) {
-			if (supplier.getSupplierId().equals(id)) {
+			if (supplier.getId().equals(id)) {
 				sysHelper.println("Supplier Founded for ID :["
-						+ supplier.getSupplierId() + "] \n Name : ["
-						+ supplier.getSupplierName() + "]" + "  \n Address: ["
-						+ supplier.getSupplierAddress() + "]\n Email: ["
-						+ supplier.getSupplierEmail() + "]\n Phone: ["
-						+ supplier.getSupplierPhone() + "]. \n   -o-   ");
+						+ supplier.getId() + "]  Name : ["
+						+ supplier.getName() + "]" + "   Address: ["
+						+ supplier.getAddress() + "] Email: ["
+						+ supplier.getEmail() + "] Phone: ["
+						+ supplier.getPhone() + "]. \n   -o-   ");
 				finded = true;
 			}
 		}

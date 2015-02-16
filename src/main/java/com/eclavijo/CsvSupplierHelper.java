@@ -10,6 +10,7 @@ import com.eclavijo.dao.SupplierCsvDao;
 import com.model.SupplierPOJO;
 
 public class CsvSupplierHelper {
+	static SystemHelper sysHelper = new SystemHelper();
 
 	static void readSupplierCsvFile(String location) {
 
@@ -17,7 +18,6 @@ public class CsvSupplierHelper {
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ",";
-		SystemHelper sysHelper = new SystemHelper();
 
 		try {
 
@@ -58,7 +58,6 @@ public class CsvSupplierHelper {
 
 		// ask for supplier info and Fill a Supplier object
 		SupplierCsvDao supplierDao = new SupplierCsvDao();
-		SystemHelper sysHelper = new SystemHelper();
 
 		long lastId = supplierDao.getLastSupplierId("c:\\suppliers.csv");
 		long id = lastId + 1;
@@ -71,7 +70,7 @@ public class CsvSupplierHelper {
 		supplierDao.addSupplier("c:\\suppliers.csv", supplier);
 
 		sysHelper
-				.println("\n\n------ Thank for adding supplier's info -------\n\n ");
+				.println("\n\n------ Thanks for adding supplier's info -------\n\n ");
 
 		return supplier;
 	}
@@ -82,14 +81,13 @@ public class CsvSupplierHelper {
 	}
 
 	public void printSupplier(SupplierPOJO supplier) {
-		SystemHelper sysHelper = new SystemHelper();
 
 		
-		sysHelper.println(" ID :[" + supplier.getSupplierId() + "] \n Name : ["
-				+ supplier.getSupplierName() + "]" + "  \n Address: ["
-				+ supplier.getSupplierAddress() + "]\n Email: ["
-				+ supplier.getSupplierEmail() + "]\n Phone: ["
-				+ supplier.getSupplierPhone() + "]. \n   -o-   ");		
+		sysHelper.println(" ID :[" + supplier.getId() + "] \n Name : ["
+				+ supplier.getName() + "]" + "  \n Address: ["
+				+ supplier.getAddress() + "]\n Email: ["
+				+ supplier.getEmail() + "]\n Phone: ["
+				+ supplier.getPhone() + "]. \n   -o-   ");		
 
 	}
 }

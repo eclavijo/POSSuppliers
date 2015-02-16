@@ -6,13 +6,13 @@
 <mapper namespace="Supplier">
 
 	<resultMap id="result" type="Supplier">
-		<result property="supplierId" column="id" />
-		<result property="supplierName" column="name" />
-		<result property="supplierAddress" column="address" />
-		<result property="supplierPhone" column="phone" />
-		<result property="supplierEmail" column="email" />
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="address" column="address" />
+		<result property="phone" column="phone" />
+		<result property="email" column="email" />
 	</resultMap>
-	
+
 
 
 	<select id="getAll" resultMap="result">
@@ -20,27 +20,34 @@
 	</select>
 
 	<select id="getById" parameterType="int" resultMap="result">
-		SELECT * FROM SUPPLIER WHERE id = #{id}
+		SELECT * FROM
+		SUPPLIER WHERE id = #{id}
 	</select>
 
 	<delete id="deleteById" parameterType="int">
-		DELETE from SUPPLIER WHERE id = #{id};
+		DELETE from SUPPLIER WHERE
+		id = #{id};
 	</delete>
-
-	<insert id="insert" useGeneratedKeys="true"
-    keyProperty="id" parameterType="Supplier">
-		INSERT INTO SUPPLIER (name, phone, email,address )
-		VALUES (#{supplierName}, #{supplierPhone}, #{supplierEmail}, #{supplierAddress});
-	</insert>
+	
+	
+	<insert id="insert" useGeneratedKeys="true" parameterType="Supplier">
+           <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+               select NEXTVAL('supplier_id_seq')
+           </selectKey>
+           INSERT INTO SUPPLIER (id,name, phone, email, address )
+		VALUES (#{id},#{name}, #{phone}, #{email}, #{address});
+   </insert>
 
 	<update id="update" parameterType="Supplier">
 		UPDATE SUPPLIER
 		SET
-		address = #{supplierAddress},
-		email = #{supplierEmail},
-		name = #{supplierName},
-		phone = #{supplierPhone}
-		WHERE id = #{supplierId};
+		address =
+		#{address},
+		email = #{email},
+		name = #{name},
+		phone = #{phone}
+		WHERE id =
+		#{id};
 	</update>
 
 </mapper>

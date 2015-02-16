@@ -8,7 +8,7 @@ public class DateUtils {
 		return new Date();
 	}
 
-	static int ageCalculator(int birthYear, int birthMonth, int birthDay,
+	public static int ageCalculator(int birthYear, int birthMonth, int birthDay,
 			int curYear, int curMonth, int curDay) {
 		String answer;
 		int current = curYear * 10000 + curMonth * 100 + curDay;

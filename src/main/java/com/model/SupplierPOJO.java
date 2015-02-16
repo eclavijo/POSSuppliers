@@ -8,71 +8,71 @@ public class SupplierPOJO implements Serializable {
 
 	private static final long serialVersionUID = 4872640461000241018L;
 
-	private Long supplierId;
-	private String supplierName;
-	private String supplierAddress;
-	private String supplierEmail;
-	private String supplierPhone;
+	private Long id;
+	private String name;
+	private String address;
+	private String email;
+	private String phone;
 
 	// Getters & Setters
 
-	public SupplierPOJO(Long supplierId, String supplierName,
-			String supplierAddress, String supplierEmail, String supplierPhone) {
-		this.supplierId = checkNotNull(supplierId);
-		this.supplierName = checkNotNull(supplierName);
-		this.supplierAddress = checkNotNull(supplierAddress);
-		this.supplierEmail = checkNotNull(supplierEmail);
-		this.supplierPhone = checkNotNull(supplierPhone);
+	public SupplierPOJO(Long id, String name,
+			String address, String email, String phone) {
+		this.id = checkNotNull(id);
+		this.name = checkNotNull(name);
+		this.address = checkNotNull(address);
+		this.email = checkNotNull(email);
+		this.phone = checkNotNull(phone);
 
-		checkArgument(supplierId > 0);
-		checkArgument(supplierPhone.length() > 0);
-		checkArgument(supplierName.length() > 0);
-		checkArgument(supplierAddress.length() > 0);
-		checkArgument(supplierEmail.length() > 0);
+		checkArgument(id > 0);
+		checkArgument(phone.length() > 0);
+		checkArgument(name.length() > 0);
+		checkArgument(address.length() > 0);
+		checkArgument(email.length() > 0);
 	}
 
 	public SupplierPOJO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Long getSupplierId() {
-		return supplierId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setSupplierId(Long supplierId) {
-		this.supplierId = checkNotNull(supplierId);
+	public void setId(Long id) {
+		this.id = checkNotNull(id);
 	}
 
-	public String getSupplierName() {
-		return supplierName;
+	public String getName() {
+		return name;
 	}
 
-	public void setSupplierName(String supplierName) {
-		this.supplierName = checkNotNull(supplierName);
+	public void setName(String name) {
+		this.name = checkNotNull(name);
 	}
 
-	public String getSupplierAddress() {
-		return supplierAddress;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setSupplierAddress(String supplierAddress) {
-		this.supplierAddress = checkNotNull(supplierAddress);
+	public void setAddress(String address) {
+		this.address = checkNotNull(address);
 	}
 
-	public String getSupplierEmail() {
-		return supplierEmail;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setSupplierEmail(String supplierEmail) {
-		this.supplierEmail = checkNotNull(supplierEmail);
+	public void setEmail(String email) {
+		this.email = checkNotNull(email);
 	}
 
-	public String getSupplierPhone() {
-		return supplierPhone;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setSupplierPhone(String supplierPhone) {
-		this.supplierPhone = checkNotNull(supplierPhone);
+	public void setPhone(String phone) {
+		this.phone = checkNotNull(phone);
 	}
 
 }

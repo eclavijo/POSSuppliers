@@ -10,37 +10,16 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.eclavijo.MyBatisConnectionFactory;
+import com.eclavijo.SystemHelper;
 import com.model.SupplierPOJO;
 
 public class SupplierDao {
 
-	// String MQL_GET_ALL_SUPPLIERS = "select * from suppliers";
-	// String MQL_GET_SUPPLIER_BY_ID =
-	// "select * from suppliers where id = #{id}";
-	// String MQL_CREATE_SUPPLIER =
-	// "insert into suppliers (name, email, address, phone) values (#{name},#{email},#{address},#{phone})";
-	// String MQL_UPDATE_SUPPLIER =
-	// "update suppliers set name=#{name}, email=#{email}, address=#{address}, phone=#{phone} where supplier_id=#{supplier_id}";
-	// String MQL_DELETE_SUPPLIER = "delete from suppliers where id=#{id}";
-	//
-	// @Select(MQL_GET_ALL_SUPPLIERS)
-	// public List<SupplierPOJO> getAllSuppliers() throws Exception;
-	//
-	// @Select(MQL_GET_SUPPLIER_BY_ID)
-	// public SupplierPOJO getUserById(long id) throws Exception;
-	//
-	// @Insert(MQL_CREATE_SUPPLIER)
-	// public int createSupplier(SupplierPOJO supplier) throws Exception;
-	//
-	// @Update(MQL_UPDATE_SUPPLIER)
-	// public int updateSupplier(SupplierPOJO supplier) throws Exception;
-	//
-	// @Delete(MQL_DELETE_SUPPLIER)
-	// public int deleteSupplier(SupplierPOJO supplier) throws Exception;
 	private SqlSessionFactory sqlSessionFactory;
+	private SystemHelper sysHelper;
 
-	public SupplierDao() {
-		sqlSessionFactory = MyBatisConnectionFactory.getSqlSessionFactory();
+	public SupplierDao(SqlSessionFactory sessionFactory) {
+		sqlSessionFactory = sessionFactory;
 	}
 
 	public SupplierPOJO insertSupplier(SupplierPOJO supplier) throws Exception {
@@ -48,20 +27,19 @@ public class SupplierDao {
 		SqlSession session = sqlSessionFactory.openSession();
 
 		try {
-			session.insert("Supplier.insert", supplier);
+			int result = session.insert("Supplier.insert", supplier);
 			session.commit();
+			return supplier;
+		} catch (Exception e) {
+			System.out.println("Error in insert !!!");
+			e.printStackTrace();
+			return null;
 		} finally {
 			session.close();
 		}
-		return supplier;
+
 	}
 
-	/**
-	 * Returns the list of all Contact instances from the database.
-	 * 
-	 * @return the list of all Contact instances from the database.
-	 */
-	@SuppressWarnings("unchecked")
 	public List<SupplierPOJO> getList() {
 
 		SqlSession session = sqlSessionFactory.openSession();
@@ -69,6 +47,10 @@ public class SupplierDao {
 		try {
 			List<SupplierPOJO> list = session.selectList("Supplier.getAll");
 			return list;
+		} catch (Exception e) {
+			sysHelper.println("Error in Listing !!!");
+			e.printStackTrace();
+			return null;
 		} finally {
 			session.close();
 		}
@@ -82,6 +64,10 @@ public class SupplierDao {
 			SupplierPOJO contact = (SupplierPOJO) session.selectOne(
 					"Supplier.getById", id);
 			return contact;
+		} catch (Exception e) {
+			sysHelper.println("Error in findById !!!");
+			e.printStackTrace();
+			return null;
 		} finally {
 			session.close();
 		}
@@ -94,34 +80,42 @@ public class SupplierDao {
 		try {
 			session.update("Supplier.update", supplier);
 			session.commit();
+		} catch (Exception e) {
+			sysHelper.println("Error on update !!!");
+			e.printStackTrace();
 		} finally {
 			session.close();
 		}
 	}
 
-	public void deleteById(long id) {
+	public boolean deleteById(long id) {
 
 		SqlSession session = sqlSessionFactory.openSession();
 
 		try {
 			session.delete("Supplier.deleteById", id);
 			session.commit();
+			return true;
+		} catch (Exception e) {
+			sysHelper.println("Error on delete !!!");
+			e.printStackTrace();
+			return false;
 		} finally {
 			session.close();
 		}
 	}
 
-	public long getNextId() {
-
-		SqlSession session = sqlSessionFactory.openSession();
-		long nextId = 0;
-		try {
-			nextId = (Long) session.selectOne("Supplier.getNextId");
-			session.commit();
-		} finally {
-			session.close();
-		}
-		return nextId;
-	}
+	// public long getNextId() {
+	//
+	// SqlSession session = sqlSessionFactory.openSession();
+	// long nextId = 0;
+	// try {
+	// nextId = (Long) session.selectOne("Supplier.getNextId");
+	// session.commit();
+	// } finally {
+	// session.close();
+	// }
+	// return nextId;
+	// }
 
 }

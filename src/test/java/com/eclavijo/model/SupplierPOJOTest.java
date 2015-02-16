@@ -12,8 +12,8 @@ public class SupplierPOJOTest {
 	@Test
 	public void testPojoSetId() {
 
-		supplier.setSupplierId(123L);
-		assertEquals(Long.valueOf("123"), supplier.getSupplierId() );
+		supplier.setId(123L);
+		assertEquals(Long.valueOf("123"), supplier.getId() );
 		
 	}
 	
@@ -21,31 +21,31 @@ public class SupplierPOJOTest {
 	@Test
 	public void testPojoSetName() {
 
-		supplier.setSupplierName("nombre de prueba");
-		assertEquals("nombre de prueba", supplier.getSupplierName());
+		supplier.setName("nombre de prueba");
+		assertEquals("nombre de prueba", supplier.getName());
 		
 	}
 	
 	@Test
 	public void testPojoSetAddress() {
 
-		supplier.setSupplierAddress("test address");
-		assertEquals("test address", supplier.getSupplierAddress());
+		supplier.setAddress("test address");
+		assertEquals("test address", supplier.getAddress());
 		
 	}
 
 	@Test
 	public void testPojoSetEmail() {
 
-		supplier.setSupplierEmail("test email");
-		assertEquals("test email", supplier.getSupplierEmail());
+		supplier.setEmail("test email");
+		assertEquals("test email", supplier.getEmail());
 		
 	}
 	
 	@Test
 	public void testPojoSetPhone() {
-		supplier.setSupplierPhone("test phone");
-		assertEquals("test phone",supplier.getSupplierPhone() );
+		supplier.setPhone("test phone");
+		assertEquals("test phone",supplier.getPhone() );
 		
 	}
 }
