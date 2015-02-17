@@ -5,12 +5,24 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.eclavijo.SystemHelper;
+import com.eclavijo.csv.SupplierCsvFileReader;
 import com.eclavijo.dao.SupplierCsvDao;
 import com.model.SupplierPOJO;
 
 public class CsvSupplierHelper {
 	static SystemHelper sysHelper = new SystemHelper();
+	SupplierCsvFileReader csvReader ;
+	
+	
+	
+	public CsvSupplierHelper(SupplierCsvFileReader csvReader) {
+		this.csvReader = csvReader;
+	}
+
 
 	static void readSupplierCsvFile(String location) {
 
@@ -51,6 +63,21 @@ public class CsvSupplierHelper {
 
 		sysHelper.println("Done");
 
+	}
+	
+	
+	public void printSuppliersList(List<SupplierPOJO> suppliers) {
+
+		sysHelper.println("[ ID ]	[  Name  ]	[ Address ]	  [ Email ]	  [ Phone ]");
+		for (SupplierPOJO supplier : suppliers) {
+			sysHelper.println("[" + supplier.getId()
+					+ "][" + supplier.getName() 
+					+ "][" + supplier.getAddress()
+					+ "][" + supplier.getEmail()
+					+ "][" + supplier.getPhone()
+					+ "] \n ");
+		}
+		sysHelper.println("------------------------------------------------");
 	}
 
 	public SupplierPOJO generateSupplierCsvEntry() throws ParseException,

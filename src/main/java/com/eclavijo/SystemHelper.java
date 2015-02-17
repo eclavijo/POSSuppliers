@@ -19,17 +19,16 @@ public class SystemHelper {
 		String incoming = scanner.nextLine();
 		return incoming;
 	}
-	
-	public void printSupplier(SupplierPOJO supplier){
-	
-	
-	println(" ID: [" + supplier.getId() + "]  Name: ["
-			+ supplier.getName() + "]" + "   Address: [" + supplier.getAddress()
-			+ "] Email: [" + supplier.getEmail() + "] Phone: ["
-			+ supplier.getPhone() + "]. \n   -o-   ");
-	
+
+	public void printSupplier(SupplierPOJO supplier) {
+
+		println(" ID: [" + supplier.getId() + "]  Name: [" + supplier.getName()
+				+ "]" + "   Address: [" + supplier.getAddress() + "] Email: ["
+				+ supplier.getEmail() + "] Phone: [" + supplier.getPhone()
+				+ "]. \n   -o-   ");
+
 	}
-	
+
 	public Integer readInt(String msg) {
 		println(msg);
 		Integer incoming = 0;

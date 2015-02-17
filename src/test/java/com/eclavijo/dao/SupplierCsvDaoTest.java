@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.eclavijo.CsvSupplierHelper;
 import com.model.SupplierPOJO;
+import com.eclavijo.csv.SupplierCsvFileReader;
 import com.eclavijo.dao.SupplierCsvDao;
 
 import junit.framework.TestCase;
@@ -18,7 +19,8 @@ public class SupplierCsvDaoTest extends TestCase {
 	
 	@Test
 	public void supplierCsvDaoTestAdd() throws IOException, ParseException {
-		CsvSupplierHelper helper = new CsvSupplierHelper();
+		SupplierCsvFileReader csvReader = new SupplierCsvFileReader(CSV_FILENAME);
+		CsvSupplierHelper helper = new CsvSupplierHelper(csvReader);
 		
 		SupplierPOJO supplier = helper.generateSupplierCsvEntry();
 		SupplierCsvDao supplierDao = new SupplierCsvDao();

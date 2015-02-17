@@ -18,32 +18,27 @@ public class SupplierCsvFileWriter {
 	// CSV file header
 	private static final Object[] FILE_HEADER = { "id", "name", "adress",
 			"email", "phone" };
-	private  static  SupplierCsvFileReader csvReader;
+	private String filePath;
 	private static final SystemHelper sysHelper = new SystemHelper();
-	
-	public SupplierCsvFileWriter(SupplierCsvFileReader csvReader) {
-		this.csvReader = csvReader;
+
+	public SupplierCsvFileWriter(String filePath) {
+		this.filePath = filePath;
 	}
 
-	public static void writeCsvFile(
-			List<SupplierPOJO> listSuppliers) {
+	public void writeCsvFile(List<SupplierPOJO> listSuppliers) {
 
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT
 				.withRecordSeparator(NEW_LINE_SEPARATOR);
 		try {
-			fileWriter = new FileWriter(csvReader.getLocation());
+			fileWriter = new FileWriter(filePath);
 			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
 			csvFilePrinter.printRecord(FILE_HEADER);
 			for (SupplierPOJO supplier : listSuppliers) {
-				List supplierDataRecord = new ArrayList();
-				supplierDataRecord.add(String.valueOf(supplier.getId()));
-				supplierDataRecord.add(supplier.getName());
-				supplierDataRecord.add(supplier.getAddress());
-				supplierDataRecord.add(supplier.getEmail());
-				supplierDataRecord.add(supplier.getPhone());
-				csvFilePrinter.printRecord(supplierDataRecord);
+				//
+
+				printRecord(supplier, csvFilePrinter);
 			}
 
 		} catch (Exception e) {
@@ -62,7 +57,22 @@ public class SupplierCsvFileWriter {
 		}
 	}
 
-	public List writeCsvFileAdd(String fileName, SupplierPOJO newSupplier) {
+	private List<String> printRecord(SupplierPOJO supplier,
+			CSVPrinter csvFilePrinter) throws IOException {
+		List<String> supplierDataRecord = new ArrayList<String>();
+		supplierDataRecord.add(String.valueOf(supplier.getId()));
+		supplierDataRecord.add(supplier.getName());
+		supplierDataRecord.add(supplier.getAddress());
+		supplierDataRecord.add(supplier.getEmail());
+		supplierDataRecord.add(supplier.getPhone());
+		csvFilePrinter.printRecord(supplierDataRecord);
+
+		return supplierDataRecord;
+
+	}
+
+	public List<String> writeCsvFileAdd(String fileName,
+			SupplierPOJO newSupplier) {
 
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
@@ -71,13 +81,8 @@ public class SupplierCsvFileWriter {
 		try {
 			fileWriter = new FileWriter(fileName, true);
 			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-			List supplierDataRecord = new ArrayList();
-			supplierDataRecord.add(String.valueOf(newSupplier.getId()));
-			supplierDataRecord.add(newSupplier.getName());
-			supplierDataRecord.add(newSupplier.getAddress());
-			supplierDataRecord.add(newSupplier.getEmail());
-			supplierDataRecord.add(newSupplier.getPhone());
-			csvFilePrinter.printRecord(supplierDataRecord);
+			List<String> supplierDataRecord = printRecord(newSupplier,
+					csvFilePrinter);
 			return supplierDataRecord;
 		} catch (Exception e) {
 			sysHelper.println("Error in CsvFileWriter !!!");
@@ -96,9 +101,8 @@ public class SupplierCsvFileWriter {
 		}
 	}
 
-	public SupplierPOJO deleteSupplierById(Long id, String csvFilename) {
-		List<SupplierPOJO> listSuppliers = csvReader
-				.returnSuppliersList();
+	public SupplierPOJO deleteSupplierById(Long id,
+			List<SupplierPOJO> listSuppliers) {
 		SupplierPOJO toDeleteSupplier = new SupplierPOJO();
 		for (SupplierPOJO supplier : listSuppliers) {
 			if (supplier.getId().equals(id)) {
@@ -108,53 +112,30 @@ public class SupplierCsvFileWriter {
 		if (toDeleteSupplier != null) {
 			listSuppliers.remove(toDeleteSupplier);
 			writeCsvFile(listSuppliers);
-			sysHelper.printSupplier(toDeleteSupplier);
-			sysHelper.println("\n" + "Supplier: [" + id + "] Deleted.");
 			return toDeleteSupplier;
-		} else {
-			sysHelper.println("Imposible to Find Supplier: [" + id + "].");
-			return null;
 		}
-		
+		sysHelper.println("Imposible to Find Supplier: [" + id + "].");
+		return null;
 	}
 
-	public SupplierPOJO modifySupplierById(Long id) {
-		List<SupplierPOJO> listSuppliers = csvReader
-				.returnSuppliersList();
+	public SupplierPOJO modifySupplier(SupplierPOJO supplier,
+			List<SupplierPOJO> listSuppliers) {
 		SupplierPOJO toUpdateSupplier = new SupplierPOJO();
-		boolean finded = false;
+
 		for (SupplierPOJO supplierIndexer : listSuppliers) {
 			long suppId = supplierIndexer.getId();
-			if (suppId == id) {
+			if (suppId == supplier.getId()) {
 				toUpdateSupplier = supplierIndexer;
-				finded = true;
+
 			}
 		}
-		if (finded) {
-			SupplierPOJO newSupplier = toUpdateSupplier;
-			String name = sysHelper
-					.readln("\nEnter Supplier's new Name\n");
-			String address = sysHelper
-					.readln("\nEnter Supplier's new Address\n");
-			String email= sysHelper
-					.readln("\nEnter Supplier's new Email\n");
-			String phone= sysHelper
-					.readln("\nEnter Supplier's new Phone\n");
-			if(name.equals(""))name=toUpdateSupplier.getName();
-			if(address.equals(""))name=toUpdateSupplier.getAddress();
-			if(email.equals(""))name=toUpdateSupplier.getEmail();
-			if(phone.equals(""))name=toUpdateSupplier.getPhone();
-			newSupplier.setName(name);
-			newSupplier.setAddress(address);
-			newSupplier.setEmail(email);
-			newSupplier.setPhone(phone);
-			listSuppliers.set(listSuppliers.indexOf(toUpdateSupplier),
-					newSupplier);
-			writeCsvFile(listSuppliers);
-			sysHelper.println("\n");
-			sysHelper.println("****** Suppliers List Updated. ******");
-		return newSupplier;
-		}
-		else return null;
+		
+		listSuppliers.set(listSuppliers.indexOf(toUpdateSupplier), supplier);
+		writeCsvFile(listSuppliers);
+		sysHelper.println("\n");
+		sysHelper.println("****** Suppliers List Updated. ******");
+
+		return supplier;
+
 	}
 }

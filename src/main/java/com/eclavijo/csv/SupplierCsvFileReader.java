@@ -2,7 +2,6 @@ package com.eclavijo.csv;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,36 +17,33 @@ public class SupplierCsvFileReader {
 	// CSV file header
 	private static final String[] FILE_HEADER_MAPPING = { "id", "name",
 			"address", "email", "phone" };
-	private static String location ="";
-	
-	public SupplierCsvFileReader(String location) {
-		this.location = location;
-	}
-
+	private String filePath = "";
 	private final SystemHelper sysHelper = new SystemHelper();
-	
-	
 
-	public static String getLocation() {
-		return location;
+	public SupplierCsvFileReader(String filePath) {
+		this.filePath = filePath;
 	}
 
-	public static void setLocation(String location) {
-		SupplierCsvFileReader.location = location;
+	public String getLocation() {
+		return filePath;
 	}
 
-	public List<SupplierPOJO> returnSuppliersList() {
+	public void setLocation(String location) {
+		this.filePath = location;
+	}
+
+	public List<SupplierPOJO> getSuppliersList() {
 		FileReader fileReader = null;
 		CSVParser csvFileParser = null;
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT
 				.withHeader(FILE_HEADER_MAPPING);
 		try {
 			List<SupplierPOJO> suppliers = new ArrayList<SupplierPOJO>();
-			fileReader = new FileReader(location);
+			fileReader = new FileReader(filePath);
 			csvFileParser = new CSVParser(fileReader, csvFileFormat);
-			List csvRecords = csvFileParser.getRecords();
+			List<CSVRecord> csvRecords = csvFileParser.getRecords();
 			for (int i = 1; i < csvRecords.size(); i++) {
-				CSVRecord record = (CSVRecord) csvRecords.get(i);
+				CSVRecord record = csvRecords.get(i);
 				SupplierPOJO supplier = new SupplierPOJO(Long.valueOf(record
 						.get("id")), record.get("name"), record.get("address"),
 						record.get("email"), record.get("phone"));
@@ -72,7 +68,7 @@ public class SupplierCsvFileReader {
 
 	public long getLastSupplierId() {
 
-		List<SupplierPOJO> suppliers = returnSuppliersList();
+		List<SupplierPOJO> suppliers = getSuppliersList();
 		long lastId = 0;
 		for (SupplierPOJO supplier : suppliers) {
 			lastId = supplier.getId();
@@ -80,40 +76,17 @@ public class SupplierCsvFileReader {
 		return lastId;
 	}
 
-	public void printSuppliersList() {
-		List<SupplierPOJO> suppliers = returnSuppliersList();
-		sysHelper.println("[ ID ]	[  Name  ]	[ Address ]	  [ Email ]	  [ Phone ]");
-		for (SupplierPOJO supplier : suppliers) {
-			sysHelper.println("[" + supplier.getId()
-					+ "][" + supplier.getName() 
-					+ "][" + supplier.getAddress()
-					+ "][" + supplier.getEmail()
-					+ "][" + supplier.getPhone()
-					+ "] \n ");
-		}
-		sysHelper.println("------------------------------------------------");
-	}
-
-	public Long findSupplierById(Long id) {
-		List<SupplierPOJO> suppliers = returnSuppliersList();
-		boolean finded = false;
+	public SupplierPOJO getSupplierById(Long id) {
+		List<SupplierPOJO> suppliers = getSuppliersList();
 		for (SupplierPOJO supplier : suppliers) {
 			if (supplier.getId().equals(id)) {
-				sysHelper.println("Supplier Founded for ID :["
-						+ supplier.getId() + "]  Name : ["
-						+ supplier.getName() + "]" + "   Address: ["
-						+ supplier.getAddress() + "] Email: ["
-						+ supplier.getEmail() + "] Phone: ["
-						+ supplier.getPhone() + "]. \n   -o-   ");
-				finded = true;
+				return supplier;
+
 			}
 		}
-		if (finded) {
-			return id;
-		} else {
-			sysHelper.println("Can't find the supplier with the ID :[" + id
-					+ "].");
-			return (long) 0;
-		}
+
+		sysHelper.println("Can't find the supplier with the ID :[" + id + "].");
+
+		return null;
 	}
 }

@@ -8,8 +8,6 @@ package com.eclavijo;
 // private static final Logger logger =
 // LoggerFactory.getLogger(DateUtils.class);
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 //para log4j
@@ -23,10 +21,15 @@ import com.eclavijo.dao.SupplierDao;
 public class SupplierMantainer {
 
 	private static final String CSV_FILENAME = "c:\\suppliersCSVlib.csv";
-	private static final SupplierCsvFileReader csvReader = new SupplierCsvFileReader(CSV_FILENAME);
-	private static final SupplierCsvFileWriter csvWriter = new SupplierCsvFileWriter(csvReader);
+	private static final SupplierCsvFileReader csvReader = new SupplierCsvFileReader(
+			CSV_FILENAME);
+	private static final SupplierCsvFileWriter csvWriter = new SupplierCsvFileWriter(
+			CSV_FILENAME);
 	private static final SupplierDao supplierDao = new SupplierDao(
 			MyBatisConnectionFactory.getSqlSessionFactory());
+
+	private static CsvSupplierHelper csvSupplierHelper = new CsvSupplierHelper(
+			csvReader);
 
 	public static void main(String[] args) throws Exception {
 		SystemHelper sysHelper = new SystemHelper();
@@ -37,7 +40,6 @@ public class SupplierMantainer {
 		// para log4j
 
 		final Logger LOGGER = Logger.getLogger(DateUtils.class);
-		CsvSupplierHelper supplierCsvHelper = new CsvSupplierHelper();
 		DateUtils dateUtils = new DateUtils();
 
 		if (args[0].equals("addDB")) {
@@ -110,18 +112,21 @@ public class SupplierMantainer {
 				SupplierPOJO supplier = supplierDao.getById(id);
 				sysHelper.println("\n Supplier's ID to modify.\n");
 				sysHelper.printSupplier(supplier);
-				String name = sysHelper
-						.readln("\nEnter Supplier's new Name\n");
+				String name = sysHelper.readln("\nEnter Supplier's new Name\n");
 				String address = sysHelper
 						.readln("\nEnter Supplier's new Address\n");
-				String email= sysHelper
+				String email = sysHelper
 						.readln("\nEnter Supplier's new Email\n");
-				String phone= sysHelper
+				String phone = sysHelper
 						.readln("\nEnter Supplier's new Phone\n");
-				if(name.equals(""))name=supplier.getName();
-				if(address.equals(""))name=supplier.getAddress();
-				if(email.equals(""))name=supplier.getEmail();
-				if(phone.equals(""))name=supplier.getPhone();
+				if (name.equals(""))
+					name = supplier.getName();
+				if (address.equals(""))
+					name = supplier.getAddress();
+				if (email.equals(""))
+					name = supplier.getEmail();
+				if (phone.equals(""))
+					name = supplier.getPhone();
 				supplier.setName(name);
 				supplier.setAddress(address);
 				supplier.setEmail(email);
@@ -130,7 +135,6 @@ public class SupplierMantainer {
 			} catch (NumberFormatException e) {
 				sysHelper.println("Wrong Number Format");
 			}
-
 
 		}
 
@@ -150,7 +154,7 @@ public class SupplierMantainer {
 					+ dateUtils.getCurrentDate() + "]\n");
 
 			long lastId = csvReader.getLastSupplierId();
-			long id = lastId + 1;//make it easy to understand
+			long id = lastId + 1;// make it easy to understand
 			SupplierPOJO supplier = new SupplierPOJO(id,
 					sysHelper.readln("\nEnter Supplier's Name\n"),
 					sysHelper.readln("\nEnter Supplier's Address\n"),
@@ -168,7 +172,8 @@ public class SupplierMantainer {
 
 			sysHelper
 					.println("*************** Suppliers List *************** \n Showing all suppliers.\n");
-			csvReader.printSuppliersList();
+			List<SupplierPOJO> suppliers = csvReader.getSuppliersList();
+			csvSupplierHelper.printSuppliersList(suppliers);
 			sysHelper.println("*************** EOF *************** \n\n");
 		}
 		if (args[0].equals("find")) {
@@ -180,7 +185,8 @@ public class SupplierMantainer {
 					.readln("\nEnter Supplier's ID to find.\n");
 			try {
 				id = Long.parseLong(received);
-				csvReader.findSupplierById(id);
+				SupplierPOJO supplier = csvReader.getSupplierById(id);
+				sysHelper.printSupplier(supplier);
 			} catch (NumberFormatException e) {
 				sysHelper.println("Wrong Number Format");
 			}
@@ -197,7 +203,12 @@ public class SupplierMantainer {
 
 			try {
 				id = Long.parseLong(input);
-				csvWriter.deleteSupplierById(id, CSV_FILENAME);
+				List<SupplierPOJO> listSuppliers = csvReader.getSuppliersList();
+				SupplierPOJO toDeleteSupplier = csvWriter.deleteSupplierById(
+						id, listSuppliers);
+
+				sysHelper.printSupplier(toDeleteSupplier);
+				sysHelper.println("\n" + "Supplier: [" + id + "] Deleted.");
 			} catch (NumberFormatException e) {
 				sysHelper.println("Wrong Number Format");
 			}
@@ -213,7 +224,34 @@ public class SupplierMantainer {
 					.readln("\nEnter Supplier's ID to modify.\n");
 			try {
 				id = Long.parseLong(input);
-				csvWriter.modifySupplierById(id);
+
+				SupplierPOJO supplier = csvReader.getSupplierById(id);
+
+				if (supplier != null) {
+					List<SupplierPOJO> listSuppliers = csvReader.getSuppliersList();
+					sysHelper.println("Supplier to Modify: \n");
+					sysHelper.printSupplier(supplier);
+
+					String name = sysHelper
+							.readln("\nEnter Supplier's new Name\n");
+					String address = sysHelper
+							.readln("\nEnter Supplier's new Address\n");
+					String email = sysHelper
+							.readln("\nEnter Supplier's new Email\n");
+					String phone = sysHelper
+							.readln("\nEnter Supplier's new Phone\n");
+
+					if (name.equals(""))
+						name = supplier.getName();
+					if (address.equals(""))
+						address = supplier.getAddress();
+					if (email.equals(""))
+						email = supplier.getEmail();
+					if (phone.equals(""))
+						phone = supplier.getPhone();
+
+					csvWriter.modifySupplier(supplier, listSuppliers);
+				}
 			} catch (NumberFormatException e) {
 				sysHelper.println("Wrong Number Format");
 			}
@@ -227,5 +265,4 @@ public class SupplierMantainer {
 		// }
 
 	}
-
 }

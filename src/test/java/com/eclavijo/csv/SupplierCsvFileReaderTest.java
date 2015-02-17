@@ -36,14 +36,14 @@ public class SupplierCsvFileReaderTest {
 		SupplierPOJO testSupplier = new SupplierPOJO(1L, "asd", "asd", "asd",
 				"sad");
 		List<SupplierPOJO> expectedList = new ArrayList<SupplierPOJO>();
-		when(csvReaderMock.returnSuppliersList()).thenReturn(expectedList);
+		when(csvReaderMock.getSuppliersList()).thenReturn(expectedList);
 
 		expectedList.add(testSupplier);
 		expectedList.add(testSupplier);
 		expectedList.add(testSupplier);
 
 		List<SupplierPOJO> receivedList = csvReaderMock
-				.returnSuppliersList();
+				.getSuppliersList();
 
 		assertEquals(expectedList, receivedList);
 	}
@@ -51,7 +51,7 @@ public class SupplierCsvFileReaderTest {
 	@Test(expected = NullPointerException.class)
 	public void supplierCsvFileNotFound() {
 		csvReaderMock = new SupplierCsvFileReader(null);
-		csvReaderMock.returnSuppliersList();
+		csvReaderMock.getSuppliersList();
 	}
 	
 	
@@ -77,11 +77,10 @@ public class SupplierCsvFileReaderTest {
 	public void supplierCsvFileReaderFindSupplierById() throws IOException,
 			ParseException {
 
-		SystemHelper sysHelper = new SystemHelper();
-		Long id = 13L;
-		when(csvReaderMock.findSupplierById(id)).thenReturn(id);
+		SupplierPOJO supplier = new SupplierPOJO();
+		when(csvReaderMock.getSupplierById(10L)).thenReturn(supplier);
 
-		assertEquals(id, csvReaderMock.findSupplierById(id));
+		assertEquals(supplier.getId(), csvReaderMock.getSupplierById(10L));
 
 	}
 }
