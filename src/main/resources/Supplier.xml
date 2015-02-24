@@ -18,6 +18,9 @@
 	<select id="getAll" resultMap="result">
 		SELECT * FROM SUPPLIER
 	</select>
+	<select id="getCurrVal" resultMap="result">
+		SELECT currval('supplier_id_seq');
+	</select>
 
 	<select id="getById" parameterType="int" resultMap="result">
 		SELECT * FROM

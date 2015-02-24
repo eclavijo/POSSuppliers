@@ -26,7 +26,7 @@ import java.io.Serializable;
 public class SupplierDaoMockitoTest {
 
 	private SupplierPOJO supplierMock;
-	private SupplierDao dao;
+	private InterfaceSupplierDao dao;
 	private SqlSessionFactory sqlSessionFactoryMock;
 	private SqlSession sessionMock;
 
@@ -36,7 +36,7 @@ public class SupplierDaoMockitoTest {
 		sqlSessionFactoryMock = mock(SqlSessionFactory.class);
 		sessionMock = mock(SqlSession.class);
 
-		dao = new SupplierDao(sqlSessionFactoryMock);
+		dao = new MyBatisSupplierDao(sqlSessionFactoryMock);
 
 		when(sqlSessionFactoryMock.openSession()).thenReturn(sessionMock);
 	}
@@ -74,7 +74,7 @@ public class SupplierDaoMockitoTest {
 		// =ArgumentCaptor.forClass(SupplierPOJO.class);
 		// doNothing()
 
-		SupplierPOJO resultSupplier = dao.insertSupplier(newSupplier);
+		SupplierPOJO resultSupplier = dao.add(newSupplier);
 
 		assertEquals(expectedSupplier.getId(), resultSupplier.getId());
 	}

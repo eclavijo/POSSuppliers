@@ -12,7 +12,13 @@ import org.apache.commons.csv.CSVRecord;
 import com.eclavijo.SystemHelper;
 import com.model.SupplierPOJO;
 
-public class SupplierCsvFileReader {
+public class SupplierCsvReader 
+ {
+
+
+	public SupplierCsvReader(String filePath) {
+		this.filePath = filePath;
+	}
 
 	// CSV file header
 	private static final String[] FILE_HEADER_MAPPING = { "id", "name",
@@ -20,19 +26,7 @@ public class SupplierCsvFileReader {
 	private String filePath = "";
 	private final SystemHelper sysHelper = new SystemHelper();
 
-	public SupplierCsvFileReader(String filePath) {
-		this.filePath = filePath;
-	}
-
-	public String getLocation() {
-		return filePath;
-	}
-
-	public void setLocation(String location) {
-		this.filePath = location;
-	}
-
-	public List<SupplierPOJO> getSuppliersList() {
+	public List<SupplierPOJO> getList() {
 		FileReader fileReader = null;
 		CSVParser csvFileParser = null;
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT
@@ -66,10 +60,11 @@ public class SupplierCsvFileReader {
 		}
 	}
 
-	public long getLastSupplierId() {
+	
+	public long getLastId() {
 
-		List<SupplierPOJO> suppliers = getSuppliersList();
-		long lastId = 0;
+		List<SupplierPOJO> suppliers = getList();
+		long lastId = 1L;
 		for (SupplierPOJO supplier : suppliers) {
 			lastId = supplier.getId();
 		}
@@ -77,7 +72,7 @@ public class SupplierCsvFileReader {
 	}
 
 	public SupplierPOJO getSupplierById(Long id) {
-		List<SupplierPOJO> suppliers = getSuppliersList();
+		List<SupplierPOJO> suppliers = getList();
 		for (SupplierPOJO supplier : suppliers) {
 			if (supplier.getId().equals(id)) {
 				return supplier;
